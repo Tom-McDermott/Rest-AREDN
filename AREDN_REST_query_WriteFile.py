@@ -2,7 +2,7 @@
 # Use REST API and JSON to query AREDN nodes about their status.
 # Write output to file.  Python 3
 #
-# Version 1.0       December 17, 2021
+# Version 1.0.1       December 30, 2021
 # Copyright 2021, Thomas C. McDermott, N5EG
 # Licensed under the GNU Public License (GPL), version 2, or at your choice any later version.
 #
@@ -53,14 +53,17 @@ now = datetime.now()
 
 with open('/home/tom/outfile.dat', 'w', newline='') as outfile:
 
-    outfile.write('Node status request.\nScan start : ' + str(now) + '\n')
+    outfile.write('Node status request.      Scan start : ' + str(now) + '\n\n\n')
 
     for node in nodes:
         try:
             r = requests.get(prefix+node+statrequest, timeout = 60)
             json = r.json()
-            outfile.write('Node: ')
-            outfile.write(node + '   Response Code: ' + str(r.status_code) + '\n')
+            outfile.write('==============================')
+            outfile.write(' Node: ')
+            outfile.write(node + '   Response Code: ' + str(r.status_code) + ' ')
+            outfile.write('==============================\n')
+            
 
             for key, value in json.items():
                 if key == 'interfaces':     # it's a list of dictionaries
@@ -85,14 +88,14 @@ with open('/home/tom/outfile.dat', 'w', newline='') as outfile:
                     outfile.write(f'{key} : {value} \n')
 
 
-            outfile.write('=========================================================================================\n')
-
-
         except Exception as e:
-            outfile.write('Node: ')
-            outfile.write(node + '    EXCEPTION\n')
+            outfile.write('==============================')
+            outfile.write(' Node: ' + node + '   EXCEPTION ')
+            outfile.write('==============================================================\n\n')
             outfile.write(str(e) + '\n')
-            outfile.write('=========================================================================================\n')
+
+        finally:
+            outfile.write('=========================================================================================================================\n\n')
 
 
     outfile.write('\n')
